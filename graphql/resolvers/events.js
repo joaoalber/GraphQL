@@ -1,5 +1,6 @@
 const Event = require('../../models/event')
 const { transformEvent } = require('./merge');
+const User = require('../../models/user')
 
 module.exports = {
     events: () => {
@@ -11,20 +12,23 @@ module.exports = {
           throw err
        })
     },
-    createEvent: args => {
+    createEvent: (args, req) => {
+      if (!req.isAuth) {
+         throw new Error('Sem autorização')
+      }
       const event = new Event({
          title: args.eventInput.title,
          description: args.eventInput.description,
          price: +args.eventInput.price,
          date: new Date(args.eventInput.date),
-         creator: '5e077d4cf3bb7f1f7caf8010'
+         creator: req.userId
       })
       let createdEvent
       return event
        .save()
        .then(result => {
          createdEvent = transformEvent(result)
-         return User.findById('5e077d4cf3bb7f1f7caf8010')
+         return User.findById(req.userId)
        }).then(creator => {
           if (!creator) {
              throw new Error('User not found.')

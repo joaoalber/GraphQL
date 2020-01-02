@@ -3,7 +3,10 @@ const Booking = require('../../models/booking')
 const { transformBooking, transformEvent } = require('./merge')
 
 module.exports = {
-    bookings: () => {
+    bookings: (args, req) => {
+      if (!req.isAuth) {
+         throw new Error('Sem autorização')
+      }
       return Booking.find().then(bookings => {
          return bookings.map(booking => {
             return transformBooking(booking)
@@ -13,11 +16,14 @@ module.exports = {
          throw err
       })
     },
-    bookEvent: args => {
+    bookEvent: (args, req) => {
+      if (!req.isAuth) {
+         throw new Error('Sem autorização')
+      }
       return Event.findOne({_id: args.eventId})
       .then(fetchedEvent => {
          const booking = new Booking({
-            user: '5e077d4cf3bb7f1f7caf8010',
+            user: req.userId,
             event: fetchedEvent
          })
          return booking.save()
@@ -29,7 +35,10 @@ module.exports = {
          throw err
       })
    },
-   cancelBooking: args => {
+   cancelBooking: (args, req) => {
+      if (!req.isAuth) {
+         throw new Error('Sem autorização')
+      }
       return Booking.findById(args.bookingId).populate('event')
       .then(booking => {
          return transformEvent(booking.event)
