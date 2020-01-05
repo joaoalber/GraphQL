@@ -10,7 +10,7 @@ const mainNavigation = props => (
         </div>
         <nav className="main-navigation__items">
             <ul>
-                <li><NavLink to="/auth">Login</NavLink></li>
+                <li><NavLink to="/auth">Cadastrar</NavLink></li>
                 <li><NavLink to="/eventos">Eventos</NavLink></li>
                 <li><NavLink to="/reservas">Reservas</NavLink></li>
             </ul>
