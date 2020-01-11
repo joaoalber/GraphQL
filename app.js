@@ -14,9 +14,9 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
    res.setHeader('Access-Control-Allow-Origin', '*')
    res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS')
-   res.setHeader('Access-Control-Allow-Headers', 'Content-Type', 'Authorization')
+   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
    if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
+      return res.sendStatus(200)
    }
    next()
 })
@@ -38,7 +38,7 @@ mongoose
       }@cluster0-xczed.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
    )
    .then(() => {
-      app.listen(8000);
+      app.listen(8000)
    })
    .catch(err => {
       console.log(err)
