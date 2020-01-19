@@ -7,7 +7,7 @@ module.exports = {
       if (!req.isAuth) {
          throw new Error('Sem autorização')
       }
-      return Booking.find().then(bookings => {
+      return Booking.find({user: req.userId}).then(bookings => {
          return bookings.map(booking => {
             return transformBooking(booking)
          })
