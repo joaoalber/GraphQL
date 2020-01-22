@@ -1,6 +1,16 @@
+const DataLoader = require('dataloader')
+
 const Event = require('../../models/event')
 const User = require('../..//models/user')
 const { dateToString } = require('../../helpers/date')
+
+const eventLoader = new DataLoader((eventIds) => {
+   return events(eventIds)
+})
+
+const userLoader = new DataLoader(userIds => {
+   return User.find({_id: {$in: userIds}})
+})
 
 const events = eventIds => {
     return Event.find({_id: {$in: eventIds}})
@@ -15,23 +25,22 @@ const events = eventIds => {
  }
 
  const singleEvent = eventId => {
-   return Event.findById(eventId)
+   return eventLoader.load(eventId.toString())
    .then(event => {
-      return transformEvent(event)
-   })
-   
+      return event
+   }) 
    .catch(err => {
       throw err
    })
  }
  
  const user = userId => {
-    return User.findById(userId)
+    return userLoader.load(userId.toString())
     .then(user => {
        return { 
         ...user._doc, 
         _id: user.id, 
-        createdEvents: events.bind(this, user._doc.createdEvents) 
+        createdEvents: eventLoader.load.bind(this, user._doc.createdEvents) 
        }
     })
     .catch(err => {
@@ -61,8 +70,4 @@ const events = eventIds => {
 
  exports.transformEvent = transformEvent
  exports.transformBooking = transformBooking
-
- // exports.user = user
- // exports.events = events
- // exports.singleEvent = singleEvent
  
